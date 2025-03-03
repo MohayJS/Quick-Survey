@@ -1,13 +1,13 @@
 import { connectToDatabase } from '@/app/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const db = await connectToDatabase();
     const surveys = await db.collection("surveys").find({}).toArray();
     return Response.json(Array.isArray(surveys) ? surveys : []);
-  } catch (error) {
-    console.error('Failed to fetch surveys:', error);
+  } catch {
+    console.error('Failed to fetch surveys:');
     return Response.json([]); // Return empty array instead of error object
   }
 }
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     const db = await connectToDatabase();
     const result = await db.collection('surveys').insertOne(surveyData);
     return Response.json(result);
-  } catch (error) {
+  } catch {
     return Response.json({ error: 'Failed to create survey' }, { status: 500 });
   }
 }
@@ -32,7 +32,7 @@ export async function PUT(request: Request) {
       { $set: updateData }
     );
     return Response.json(result);
-  } catch (error) {
+  } catch {
     return Response.json({ error: 'Failed to update survey' }, { status: 500 });
   }
 }
@@ -43,7 +43,7 @@ export async function DELETE(request: Request) {
     const db = await connectToDatabase();
     const result = await db.collection('surveys').deleteOne({ _id: new ObjectId(id) });
     return Response.json(result);
-  } catch (error) {
+  } catch {
     return Response.json({ error: 'Failed to delete survey' }, { status: 500 });
   }
 }

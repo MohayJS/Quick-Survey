@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, Db } from "mongodb";
 import dotenv from "dotenv"; // Only needed for Node.js, not Next.js
 
 dotenv.config(); // Load environment variables (Only needed for Node.js)
@@ -6,7 +6,7 @@ dotenv.config(); // Load environment variables (Only needed for Node.js)
 const remoteUri = process.env.MONGODB_URI || "";
 const localUri = process.env.MONGODB_LOCALURI || "";
 let client = new MongoClient(remoteUri);
-let db: any;
+let db: Db;
 
 export async function connectToDatabase() {
   if (!db) {

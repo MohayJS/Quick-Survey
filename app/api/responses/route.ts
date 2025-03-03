@@ -13,12 +13,12 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(result);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to save response' }, { status: 500 });
   }
 }
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const db = await connectToDatabase();
     const responses = await db.collection('responses')
@@ -33,7 +33,8 @@ export async function GET(request: Request) {
         }
       ]).toArray();
 
-    const updatedResponses = await Promise.all(responses.map(async (response: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updatedResponses = await Promise.all(responses.map(async (response: Record<string, any>) => {
       if (!response.surveyId) return response;
       const surveyId = new ObjectId(response.surveyId.toString());
       const surveyTitle = await db.collection('surveys').findOne({ _id: surveyId });
@@ -41,7 +42,7 @@ export async function GET(request: Request) {
     }));
 
     return NextResponse.json(updatedResponses);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch responses' }, { status: 500 });
   }
 }
@@ -59,7 +60,7 @@ export async function DELETE(request: Request) {
     const result = await db.collection('responses').deleteOne({ _id: new ObjectId(id) });
     // console.log(NextResponse.json(result));
     return NextResponse.json(result);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to delete survey' }, { status: 500 });
   }
 }

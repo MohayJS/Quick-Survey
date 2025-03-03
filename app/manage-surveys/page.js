@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Card, CardContent, CardDescription, CardHeader } from '../ui/card';
@@ -201,7 +200,7 @@ export default function ManageSurveys() {
                               })}
                               variant={'secondary'}
                             >
-                              Add 'Others' Option
+                              Add &apos;Others&apos; Option
                             </Button>
                     </div>
                   )}

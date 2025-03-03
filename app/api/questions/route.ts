@@ -6,10 +6,11 @@ export async function GET() {
     const db = await connectToDatabase();
     const surveys = await db.collection("surveys").find({}, { projection: { questions: 1 } }).toArray();
 
-    const questions = surveys.map((survey: { questions: any }) => survey.questions).flat();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const questions = surveys.map((survey: any) => survey.questions).flat();
 
     return NextResponse.json(Array.isArray(questions) ? questions : []);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch questions' }, { status: 500 });
   }
 }

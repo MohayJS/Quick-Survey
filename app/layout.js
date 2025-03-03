@@ -1,6 +1,5 @@
 import React from "react";
 import "./globals.css";
-import Link from 'next/link';
 
 export const metadata = {
   title: "Survey Application",

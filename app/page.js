@@ -14,6 +14,7 @@ import { SendHorizontalIcon } from 'lucide-react';
 
 export default function AnswerSurvey() {
   const [surveys, setSurveys] = useState([]);
+  const [selectedId, setSelectedId] = useState('');
   const [selectedSurvey, setSelectedSurvey] = useState(null);
   const [answers, setAnswers] = useState({});
   const [otherSpecifies, setOtherSpecifies] = useState({});
@@ -24,11 +25,30 @@ export default function AnswerSurvey() {
       .then(data => setSurveys(data));
   }, []);
 
+  // useEffect(() => {
+    // if (surveys.length != 0) {
+    //   setSelectedSurvey(surveys[0]);
+    // }
+  // },[surveys])
+
+  useEffect(() => {
+    fetch('/api/server')
+      .then(res => res.json())
+      .then(data => setSelectedId(data[0].SelectedSurvey))
+  })
+
   useEffect(() => {
     if (surveys.length != 0) {
-      setSelectedSurvey(surveys[0]);
+      console.log(selectedId)
+      surveys.forEach(element => {
+        if (element._id === selectedId) {
+          setSelectedSurvey(element);
+          console.log(element)
+        }
+      });
     }
-  },[surveys])
+    console.log(surveys)
+  }, [surveys])
 
   const handleSubmit = async () => {
     const answersWithOthers = { ...answers };

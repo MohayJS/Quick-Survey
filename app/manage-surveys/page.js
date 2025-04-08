@@ -17,6 +17,11 @@ import { SelectGroup } from '@radix-ui/react-select';
 export default function ManageSurveys() {
   const [surveys, setSurveys] = useState([]);
   const [editingSurvey, setEditingSurvey] = useState(null);
+  // const [selectedSurvey, setSelectedSurvey] = useState('');
+  const [selectedSurvey, setSelectedSurvey] = useState({
+    id: 0,
+    SelectedSurvey: ''
+  });
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -25,6 +30,7 @@ export default function ManageSurveys() {
 
   useEffect(() => {
     fetchSurveys();
+    fetchServer();
   }, []);
 
   const fetchSurveys = async () => {
@@ -36,6 +42,16 @@ export default function ManageSurveys() {
       setSurveys([]);
     }
   };
+
+  const fetchServer = async () => {
+    const res = await fetch('/api/server');
+    if (res.ok) {
+      const data = await res.json();
+      setSelectedSurvey(data[0]);
+    } else {
+      setSelectedSurvey([]);
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -77,10 +93,49 @@ export default function ManageSurveys() {
     await fetchSurveys();
   };
 
+  const handleSetSurvey = async (e) => {
+    e.preventDefault();
+    
+    try {
+      await fetch(`/api/server`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: selectedSurvey._id, ...selectedSurvey })
+      });
+      console.log("Successfully submitted");
+    } catch (err) {
+      console.log(err);
+    }
+    alert("Survey ID set successfully");
+  }
+
   return (
     <div className=''>
       <Label htmlFor="r1" className="text-2xl font-bold text-center mb-4">Manage Surveys</Label>
       
+      <form onSubmit={handleSetSurvey}>
+        <Card>
+          <CardHeader>
+            <Label htmlFor="title" className='text-2xl'>Set Selected Survey ID</Label>
+            <Input
+              type='text'
+              value={selectedSurvey.SelectedSurvey}
+              onChange={e => setSelectedSurvey({...selectedSurvey, SelectedSurvey: e.target.value})}
+              placeholder='Enter Survey ID'
+            >
+            </Input>
+            <div className="flex items-center gap-2 mb-2 mt-2 mb-5">
+              <Button
+                type="submit"
+                variant={'default'}
+              >
+                Set Survey
+              </Button>
+            </div>
+          </CardHeader>
+        </Card>
+      </form>
+
       <form onSubmit={handleSubmit}>
         <Card>
           <CardHeader>
@@ -230,7 +285,7 @@ export default function ManageSurveys() {
         {surveys.map(survey => (
           <div key={survey._id}>
             <Card>
-              <CardHeader>{survey.title}</CardHeader>
+              <CardHeader>{survey.title} - {survey._id}</CardHeader>
               <CardDescription className='ml-5'>{survey.description}</CardDescription>
               <CardContent className="flex items-center gap-2 mb-2 mt-5">
                 <Button
